@@ -1,15 +1,22 @@
 <template>
   <div>
     <a-button class="editable-add-btn" @click="handleAdd">Add</a-button>
-    <a-table :columns="columns" :dataSource="data" :loading="loading" bordered>
+    <a-table :columns="columns" 
+      :dataSource="menu_items" 
+      :pagination="pagination" 
+      :loading="loading"
+      :rowKey="record => record.id"
+      @change="handleTableChange"  
+      bordered
+    >
       <template slot="operation" slot-scope="text, record">
         <div class='editable-row-operations'>
           <span>
-            <a @click="handleEdit(record.key)">Edit</a> 
+            <a @click="handleEdit(record.id)">Edit</a> 
             <a-popconfirm
-              v-if="data.length"
+              v-if="menu_items.length"
               title="Sure to delete?"
-              @confirm="() => handleDelete(record.key)">
+              @confirm="() => handleDelete(record.id)">
               <a href="javascript:;">Delete</a>
             </a-popconfirm>
           </span>
@@ -55,28 +62,47 @@ export default {
   data () {
     return {
       menu_items: [],
-      data: [],
       columns,
-      loading: false
+      loading: false,
+      pagination: {
+        showQuickJumper: true,
+        showSizeChanger: true
+      }
     }
   },
   async mounted() {   
     await this.fetch()
   },
   methods: {
-    async fetch () {
-      this.loading = true
-      const response = await axios.get('/menu/items')
-      this.loading = false
-      this.menu_items = response.data.menu_items
-      this.data = this.menu_items.map(item=>({...item, key: item.id.toString()}))
+     handleTableChange (pagination) {
+      console.log(pagination)
+      const pager = { ...this.pagination }
+      pager.current = pagination.current
+      this.pagination = pager
+      this.fetch({
+        results: pagination.pageSize,
+        page: pagination.current,
+      })
     },
-    handleEdit(key) {
-      const menu_item = this.data.filter(item => item.key === key)[0]
+    async fetch (params={}) {
+      this.loading = true
+      const response = await axios.get('/menu/items',{params}).then((res) => {
+        const pagination = { ...this.pagination }
+        // Read total count from server
+        // pagination.total = data.totalCount;
+        pagination.total = res.data.count
+        this.loading = false
+        this.pagination = pagination
+        return res.data.menu_items
+      })
+      this.menu_items = response
+    },
+    handleEdit(id) {
+      const menu_item = this.menu_items.filter(item => item.id === id)[0]
       this.$router.push({ name: 'EditMenuItem', params: { id: menu_item.id }})
     },
-    async handleDelete(key) {
-      const menu_item = this.data.filter(item => item.key === key)[0]
+    async handleDelete(id) {
+      const menu_item = this.menu_items.filter(item => item.id === id)[0]
       const response = await axios.delete(`/menu/item/${menu_item.id}`)
       if (response.data.code !== 1) {
         console.log(response.data)

@@ -61,7 +61,7 @@ export default {
     }
   },
   async mounted() {
-    const response = await axios.get('/menu/items',{params:{count:100}})
+    const response = await axios.get('/menu/items',{params:{results:100}})
     const menu_items = response.data.menu_items
     menu_items.forEach(item => {
       let children_menu = []

@@ -68,10 +68,10 @@
           v-decorator="[
           'parent_id',
           {initialValue: menu_item.parent_id}
-          ]" style="width: 180px" @change="handleChange">
+          ]" style="width: 180px">
           <a-select-option value="0" >无</a-select-option>
           <template v-for="item in menu_items">
-            <a-select-option :value="item.id" >{{ item.title }}</a-select-option>
+            <a-select-option :value="item.id" :key="item.id">{{ item.title }}</a-select-option>
           </template>
         </a-select>
       </a-form-item>
@@ -110,7 +110,7 @@ export default {
     }
   },
   async mounted() {
-    const response = await axios.get('/menu/items')
+    const response = await axios.get('/menu/items',{params:{results:100}})
     this.menu_items = response.data.menu_items
     console.log(this.menu_items)
     this.menu_items.forEach(item => {
@@ -143,16 +143,21 @@ export default {
     handleFormLayoutChange  (e) {
       this.formLayout = e.target.value
     },
-    handleChange (value) {
-      console.log(value)
-    },
     handleSubmit (e) {
       e.preventDefault()
       this.form.validateFields(async (err, values) => {
         if (!err) {
-          const response = await axios.post(`/menu/item/${this.menu_item.id}`, values)
-          console.log(response.data)
-          this.$router.push({name: 'MenuList'})
+          const hide = this.$message.loading('正在提交修改...', 0)
+          await axios.post(`/menu/item/${this.menu_item.id}`, values).then((res) => {
+            let {code, message} = res.data
+            setTimeout(hide, 0)
+            if (code === 1) {
+              this.$message.success(message, 2)
+              this.$router.push({name: 'MenuList'})
+            } else {
+              this.$message.error(message, 2)
+            }
+          })
         }
       })
     }

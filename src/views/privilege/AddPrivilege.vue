@@ -22,49 +22,49 @@
         </a-radio-group>
       </a-form-item>
       <a-form-item
-        label="菜单标题"
+        label="邮箱"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input placeholder="标题" 
+        <a-input placeholder="邮箱" 
           v-decorator="[
-            'title',
-            { rules: [{ required: true, message: '菜单的标题一定要有哦' }] }
+            'email',
+            { rules: [{ required: true, message: '邮箱一定要有哦' }] }
           ]"
         />
       </a-form-item>
       <a-form-item
-        label="URL"
+        label="用户名"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input placeholder="匹配地址" v-decorator="['url']" />
+        <a-input placeholder="用户名" v-decorator="['username',
+            { rules: [{ required: true, message: '用户名一定不能少哦' }] }]" />
       </a-form-item>
       <a-form-item
-        label="icon"
+        label="密码"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-input placeholder="缩略图标" v-decorator="['icon']" />
+        <a-input placeholder="输入密码" type="password" v-decorator="['password',
+            { rules: [
+                { required: true, message: '密码要填哦' }, 
+                { validator: validateToNextPassword }
+              ] 
+            }]" />
       </a-form-item>
       <a-form-item
-        label="父级菜单"
+        label="确认密码"
         :label-col="formItemLayout.labelCol"
         :wrapper-col="formItemLayout.wrapperCol"
       >
-        <a-select placeholder="选择父级菜单" v-decorator="['parent_id']" style="width: 180px" @change="handleChange">
-          <a-select-option value="0" >无</a-select-option>
-          <template v-for="item in menu_items">
-            <a-select-option :value="item.id" :key="item.id">{{ item.title }}</a-select-option>
-          </template>
-        </a-select>
-      </a-form-item>
-      <a-form-item
-        label="菜单排序"
-        :label-col="formItemLayout.labelCol"
-        :wrapper-col="formItemLayout.wrapperCol"
-      >
-        <a-input placeholder="菜单排序id" v-decorator="['sort_id']" />
+        <a-input placeholder="输入密码" type="password" @blur="handleConfirmBlur" v-decorator="['confirm_password',
+            { rules: [
+                { required: true, message: '密码需要确认哦' },
+                { validator: compareToFirstPassword }
+              ] 
+            }]" 
+        />
       </a-form-item>
       <a-form-item
         :wrapper-col="buttonItemLayout.wrapperCol"
@@ -82,14 +82,10 @@ import axios from 'axios'
 export default {
   data () {
     return {
+      confirmDirty: false,
       formLayout: 'horizontal',
       form: this.$form.createForm(this),
-      menu_items: {}
     }
-  },
-  async mounted() {
-    const response = await axios.get('/menu/items')
-    this.menu_items = response.data.menu_items
   },
   computed: {
     formItemLayout () {
@@ -110,18 +106,38 @@ export default {
     handleFormLayoutChange  (e) {
       this.formLayout = e.target.value
     },
-    handleChange (value) {
-      console.log(value)
-    },
+    // handleChange (value) {
+    //   console.log(value)
+    // },
     handleSubmit (e) {
       e.preventDefault()
       this.form.validateFields(async (err, values) => {
         if (!err) {
-          const response = await axios.post('/menu/item', values)
-          this.$router.push({name:'MenuList'})
+          const response = await axios.post('/user/item', values)
+          console.log(response)
+          this.$router.push({name:'UserList'})
         }
       })
-    }
+    },
+    handleConfirmBlur (e) {
+      const value = e.target.value
+      this.confirmDirty = this.confirmDirty || !!value
+    },
+    compareToFirstPassword (rule, value, callback) {
+      const form = this.form
+      if (value && value !== form.getFieldValue('password')) {
+        callback('两次密码不一致哦')
+      } else {
+        callback()
+      }
+    },
+    validateToNextPassword (rule, value, callback) {
+      const form = this.form
+      if (value && this.confirmDirty) {
+        form.validateFields(['confirm_password'], { force: true })
+      }
+      callback()
+    },
   }
 }
 </script>
