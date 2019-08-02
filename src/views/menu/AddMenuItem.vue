@@ -89,7 +89,7 @@ export default {
   },
   async mounted() {
     const response = await axios.get('/menu/items')
-    this.menu_items = response.data.menu_items
+    this.menu_items = response.data.items
   },
   computed: {
     formItemLayout () {
@@ -120,9 +120,9 @@ export default {
           const hide = this.$message.loading('正在添加菜单...', 0)
           await axios.post('/menu/item', values).then((res)=>{
             setTimeout(hide, 0)
-            let { code, message, menu_item } = res.data
+            let { code, message, item } = res.data
             if (code === 1) {
-              this.$message.success(message + menu_item, 2)
+              this.$message.success(message + item.title, 2)
               this.$router.push({name:'MenuList'})
             } else {
               this.$message.error(message, 2)

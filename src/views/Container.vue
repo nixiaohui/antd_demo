@@ -24,7 +24,7 @@
           <template v-for="item in menu_items">
             <a-sub-menu  v-if="!item.parent_id && item.children_menu.length" :key="item.id">
               <span slot="title">
-                <a-icon :type="item.icon" />{{item.title}}
+                <a-icon :type="item.icon ? item.icon : 'right'" />{{item.title}}
               </span>
               <a-menu-item v-for="child_item in item.children_menu" :key="child_item.id">
                 <span  @click="handleMenuClick(child_item.id)"><a-icon :type="child_item.icon ? child_item.icon : 'right'" />{{child_item.title}}</span>
@@ -32,7 +32,7 @@
             </a-sub-menu>
             <a-menu-item v-if="!item.parent_id && !item.children_menu.length" :key="item.id">
               <span @click="handleMenuClick(item.id)">
-                <a-icon :type="item.icon" />{{item.title}}
+                <a-icon :type="item.icon ? item.icon : 'right'" />{{item.title}}
               </span>
             </a-menu-item>
           </template>
@@ -61,22 +61,28 @@ export default {
     }
   },
   async mounted() {
-    const response = await axios.get('/menu/items',{params:{results:100}})
-    const menu_items = response.data.menu_items
-    menu_items.forEach(item => {
-      let children_menu = []
-      children_menu = menu_items.filter(child => child.parent_id === item.id)
-      item.children_menu = children_menu
-      item.children_menu.sort((item1, item2) => {
-        return item1.sort_id - item2.sort_id
-      })
-    })
-    this.menu_items = menu_items
-    this.menu_items.sort((item1, item2) => {
-      return item1.sort_id - item2.sort_id
-    })
+    await this.fetch({results:100})
   },
   methods: {
+    async fetch (params={}) {
+      await axios.get('/menu/items',{params}).then((res) => {
+        if (res.data.code === 1) {
+          const menu_items = res.data.items
+          menu_items.forEach(item => {
+            let children_menu = []
+            children_menu = menu_items.filter(child => child.parent_id === item.id)
+            item.children_menu = children_menu
+            item.children_menu.sort((item1, item2) => {
+              return item1.sort_id - item2.sort_id
+            })
+          })
+          this.menu_items = menu_items
+          this.menu_items.sort((item1, item2) => {
+            return item1.sort_id - item2.sort_id
+          })
+        }
+      })
+    },
     handleMenuClick(id) {
       this.cMenu = []
       const cMenu = this.menu_items.find(item=>item.id===id)

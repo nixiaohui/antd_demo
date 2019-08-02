@@ -74,8 +74,7 @@ export default {
     await this.fetch()
   },
   methods: {
-     handleTableChange (pagination) {
-      console.log(pagination)
+    handleTableChange (pagination) {
       const pager = { ...this.pagination }
       pager.current = pagination.current
       this.pagination = pager
@@ -86,16 +85,18 @@ export default {
     },
     async fetch (params={}) {
       this.loading = true
-      const response = await axios.get('/menu/items',{params}).then((res) => {
-        const pagination = { ...this.pagination }
-        // Read total count from server
-        // pagination.total = data.totalCount;
-        pagination.total = res.data.count
+      await axios.get('/menu/items',{params}).then((res) => {
         this.loading = false
-        this.pagination = pagination
-        return res.data.menu_items
+        if (res.data.code === 1) {
+          const pagination = { ...this.pagination }
+          // Read total count from server
+          // pagination.total = data.totalCount;
+          pagination.total = res.data.count
+          this.loading = false
+          this.pagination = pagination
+          this.menu_items = res.data.items
+        }
       })
-      this.menu_items = response
     },
     handleEdit(id) {
       const menu_item = this.menu_items.filter(item => item.id === id)[0]

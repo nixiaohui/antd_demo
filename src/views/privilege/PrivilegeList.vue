@@ -8,7 +8,10 @@
       @change="handleTableChange"  
       bordered
     >
-      <template slot="Menus" slot-scope="Menus">{{Menus[0].title}}</template>
+      <template slot="Menu" slot-scope="Menu">{{ Menu | getMenuTitle }}</template>
+      <template slot="Element" slot-scope="Element">{{ Element | getElementTag }}</template>
+      <template slot="Operation" slot-scope="Operation">{{ Operation | getOperationTag }}</template>
+
       <template slot="operation" slot-scope="record">
         <div class='editable-row-operations'>
           <span>
@@ -34,11 +37,24 @@ const columns = [{
   width: '10%',
   scopedSlots: { customRender: 'id' },
 }, {
-  title: '标签',
-  dataIndex: 'Menus',
-  width: '25%',
-  scopedSlots: { customRender: 'Menus' },
-}, {
+  title: '菜单标题',
+  dataIndex: 'Menu',
+  width: '15%',
+  scopes: { customTitle: 'Menu'},
+  scopedSlots: { customRender: 'Menu' },
+},{
+  title: '元素标签',
+  dataIndex: 'Element',
+  width: '15%',
+  scopes: { customTitle: 'Element'},
+  scopedSlots: { customRender: 'Element' },
+},{
+  title: '功能标签',
+  dataIndex: 'Operation',
+  width: '15%',
+  scopes: { customTitle: 'Operation'},
+  scopedSlots: { customRender: 'Operation' },
+},{    
   title: '类别',
   dataIndex: 'privilege_type',
   width: '25%',
@@ -101,6 +117,29 @@ export default {
       }
     }
   },
+  filters:{
+    getMenuTitle(Menu) {
+      if (Menu) {
+        return Menu.title
+      } else {
+        return '无'
+      }
+    },
+    getElementTag(Element) {
+      if (Element) {
+        return Element.tag
+      } else {
+        return '无'
+      }
+    },
+    getOperationTag(Operation) {
+      if (Operation) {
+        return Operation.tag
+      } else {
+        return '无'
+      }
+    }
+  }
 }
 </script>
 <style scoped>

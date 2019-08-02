@@ -111,8 +111,7 @@ export default {
   },
   async mounted() {
     const response = await axios.get('/menu/items',{params:{results:100}})
-    this.menu_items = response.data.menu_items
-    console.log(this.menu_items)
+    this.menu_items = response.data.items
     this.menu_items.forEach(item => {
       if (this.$route.params.id === item.id) {
         this.menu_item = item

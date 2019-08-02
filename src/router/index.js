@@ -7,9 +7,15 @@ import MenuList from '@/views/menu/MenuList.vue'
 
 import UserList from '@/views/user/UserList.vue'
 import AddUser from '@/views/user/AddUser.vue'
+import GroupList from '@/views/user/GroupList.vue'
+import AddGroup from '@/views/user/AddGroup.vue'
+import EditGroup from '@/views/user/EditGroup.vue'
 
 import PrivilegeList from '@/views/privilege/PrivilegeList.vue'
-import AddPrivilege from '@/views/privilege/AddPrivilege.vue'
+
+import ElementList from '@/views/privilege/ElementList.vue'
+import AddElement from '@/views/privilege/AddElement.vue'
+import EditElement from '@/views/privilege/EditElement.vue'
 
 import TestState from '@/views/TestState'
 
@@ -67,6 +73,21 @@ export default new Router({
               path: 'add_user',
               name: 'AddUser',
               component: AddUser
+            },
+            {
+              path: 'group_list',
+              name: 'GroupList',
+              component: GroupList
+            },
+            {
+              path: 'add_group',
+              name: 'AddGroup',
+              component: AddGroup
+            },
+            {
+              path: 'edit_group/:id',
+              name: 'EditGroup',
+              component: EditGroup
             }
           ]
         },
@@ -86,9 +107,19 @@ export default new Router({
               component: PrivilegeList
             },
             {
-              path: 'add_privilege',
-              name: 'AddPrivilege',
-              component: AddPrivilege
+              path: 'element_list',
+              name: 'ElementList',
+              component: ElementList
+            },
+            {
+              path: 'add_element',
+              name: 'AddElement',
+              component: AddElement
+            },
+            {
+              path: 'edit_element',
+              name: 'EditElement',
+              component: EditElement
             }
           ]
         },
