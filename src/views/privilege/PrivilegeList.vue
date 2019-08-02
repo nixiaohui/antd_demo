@@ -1,19 +1,20 @@
 <template>
   <div>
     <a-table :columns="columns" 
-      :dataSource="privilige_items" 
+      :dataSource="privilege_items" 
       :pagination="pagination" 
       :loading="loading"
       :rowKey="record => record.id"
       @change="handleTableChange"  
       bordered
     >
-      <template slot="operation" slot-scope="text, record">
+      <template slot="Menus" slot-scope="Menus">{{Menus[0].title}}</template>
+      <template slot="operation" slot-scope="record">
         <div class='editable-row-operations'>
           <span>
             <a @click="handleEdit(record.id)">Edit</a> 
             <a-popconfirm
-              v-if="privilige_items.length"
+              v-if="privilege_items.length"
               title="Sure to delete?"
               @confirm="() => handleDelete(record.id)">
               <a href="javascript:;">Delete</a>
@@ -34,13 +35,13 @@ const columns = [{
   scopedSlots: { customRender: 'id' },
 }, {
   title: '标签',
-  dataIndex: 'Tag',
-  width: '15%',
-  scopedSlots: { customRender: 'Tag' },
+  dataIndex: 'Menus',
+  width: '25%',
+  scopedSlots: { customRender: 'Menus' },
 }, {
   title: '类别',
   dataIndex: 'privilege_type',
-  width: '40%',
+  width: '25%',
   scopedSlots: { customRender: 'privilege_type' },
 }, {  
   title: '操作',
@@ -50,7 +51,7 @@ const columns = [{
 export default {
   data () {
     return {
-      privilige_items: [],
+      privilege_items: [],
       columns,
       loading: false,
       pagination: {
@@ -82,18 +83,17 @@ export default {
         pagination.total = res.data.count
         this.loading = false
         this.pagination = pagination
-        console.log(response)
-        return res.data.privilige_items
+        return res.data.privilege_items
       })
-      this.privilige_items = response
+      this.privilege_items = response
     },
     handleEdit(id) {
-      const privilige_item = this.privilige_items.filter(item => item.id === id)[0]
-      this.$router.push({ name: 'EditMenuItem', params: { id: privilige_item.id }})
+      const privilege_item = this.privilege_items.filter(item => item.id === id)[0]
+      this.$router.push({ name: 'EditMenuItem', params: { id: privilege_item.id }})
     },
     async handleDelete(id) {
-      const privilige_item = this.privilige_items.filter(item => item.id === id)[0]
-      const response = await axios.delete(`/privilege/item/${privilige_item.id}`)
+      const privilege_item = this.privilege_items.filter(item => item.id === id)[0]
+      const response = await axios.delete(`/privilege/item/${privilege_item.id}`)
       if (response.data.code !== 1) {
         console.log(response.data)
       } else {
