@@ -1,24 +1,21 @@
 <template>
   <div>
-    <a-button class="editable-add-btn" @click="handleAdd">Add</a-button>
+    <a-button class="editable-add-btn" @click="handleAdd">添加</a-button>
     <a-table :columns="columns" :dataSource="data" :loading="loading" :rowKey="record=>record.id" bordered>
       <template slot="operation" slot-scope="text, record">
         <div class='editable-row-operations'>
           <span>
-            <a @click="handleEdit(record.id)">Edit</a> 
+            <a @click="handleEdit(record.id)">编辑</a> 
             <a-popconfirm
               v-if="data.length"
               title="Sure to delete?"
               @confirm="() => handleDelete(record.id)">
-              <a href="javascript:;">Delete</a>
+              <a href="javascript:;">删除</a>
             </a-popconfirm>
           </span>
         </div>
       </template>
     </a-table>  
-    <template>
-      <a-pagination showQuickJumper :defaultCurrent="2" :total="500" @change="onChange" />
-    </template>
   </div>
 
 </template>
@@ -65,8 +62,8 @@ export default {
     handleEdit(id) {
       this.$router.push({ name: 'EditGroup', params: { id: id }})
     },
-    async handleDelete(key) {
-      const response = await axios.delete(`/group/item/${user_item.id}`)
+    async handleDelete(id) {
+      const response = await axios.delete(`/group/item/${id}`)
       if (response.data.code !== 1) {
         console.log(response.data)
       } else {

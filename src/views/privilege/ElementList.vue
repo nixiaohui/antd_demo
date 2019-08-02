@@ -86,7 +86,7 @@
             this.pagination = pagination
             this.data = res.data.items
           }
-        }).catch((error) =>　{
+        }).catch((error) => {
           console.log(error.message)
         })
       },
@@ -97,6 +97,7 @@
         this.$router.push({name: 'EditElement', params:{id:id}})
       },
       handleDelete(id) {
+        console.log(id)
         console.log('输时不提供删除功能')
       }
     }

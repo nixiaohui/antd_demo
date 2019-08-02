@@ -1,24 +1,22 @@
 <template>
   <div>
-    <a-button class="editable-add-btn" @click="handleAdd">Add</a-button>
+    <a-button class="editable-add-btn" @click="handleAdd">添加</a-button>
     <a-table :columns="columns" :dataSource="data" :loading="loading" bordered>
       <template slot="operation" slot-scope="text, record">
         <div class='editable-row-operations'>
           <span>
-            <a @click="handleEdit(record.key)">Edit</a> 
+            <a @click="handleEdit(record.id)">编辑</a> 
+            <a @click="handleEditGroup(record.id)">编辑组别</a> 
             <a-popconfirm
               v-if="data.length"
               title="Sure to delete?"
-              @confirm="() => handleDelete(record.key)">
-              <a href="javascript:;">Delete</a>
+              @confirm="() => handleDelete(record.id)">
+              <a href="javascript:;">删除</a>
             </a-popconfirm>
           </span>
         </div>
       </template>
     </a-table>  
-    <template>
-      <a-pagination showQuickJumper :defaultCurrent="2" :total="500" @change="onChange" />
-    </template>
   </div>
 
 </template>
@@ -61,12 +59,13 @@ export default {
       this.loading = true
       const response = await axios.get('/user/items')
       this.loading = false
-      this.user_items = response.data.users
-      this.data = this.user_items.map(item=>({...item, key: item.id.toString()}))
+      this.data = response.data.users
     },
-    handleEdit(key) {
-      const user_item = this.data.filter(item => item.key === key)[0]
-      this.$router.push({ name: 'EditUserItem', params: { id: user_item.id }})
+    handleEdit(id) {
+      this.$router.push({ name: 'EditUser', params: { id: id }})
+    },
+    handleEditGroup(id) {
+      this.$router.push({ name: 'EditUserGroup', params: { id: id }})
     },
     async handleDelete(key) {
       const user_item = this.data.filter(item => item.key === key)[0]

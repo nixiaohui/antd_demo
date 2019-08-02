@@ -7,9 +7,11 @@ import MenuList from '@/views/menu/MenuList.vue'
 
 import UserList from '@/views/user/UserList.vue'
 import AddUser from '@/views/user/AddUser.vue'
+import EditUser from '@/views/user/EditUser.vue'
 import GroupList from '@/views/user/GroupList.vue'
 import AddGroup from '@/views/user/AddGroup.vue'
 import EditGroup from '@/views/user/EditGroup.vue'
+import EditUserGroup from '@/views/user/EditUserGroup.vue'
 
 import PrivilegeList from '@/views/privilege/PrivilegeList.vue'
 
@@ -73,6 +75,11 @@ export default new Router({
               path: 'add_user',
               name: 'AddUser',
               component: AddUser
+            }, 
+            {
+              path: 'edit_user/:id',
+              name: 'EditUser',
+              component: EditUser
             },
             {
               path: 'group_list',
@@ -88,6 +95,11 @@ export default new Router({
               path: 'edit_group/:id',
               name: 'EditGroup',
               component: EditGroup
+            },
+            {
+              path: 'edit_usergroup/:id',
+              name: 'EditUserGroup',
+              component: EditUserGroup
             }
           ]
         },
