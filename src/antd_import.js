@@ -4,7 +4,7 @@ import { Layout, Menu, Breadcrumb } from 'ant-design-vue'
 import { Icon, Button } from 'ant-design-vue'
 import { Form, Radio, Checkbox, Input, Select } from 'ant-design-vue'
 import { Table, Popconfirm, Pagination } from 'ant-design-vue'
-import { Steps } from 'ant-design-vue'
+import { Steps, Card } from 'ant-design-vue'
 
 Vue.prototype.$message = message
 
@@ -26,3 +26,4 @@ Vue.use(Popconfirm)
 Vue.use(Pagination)
 
 Vue.use(Steps)
+Vue.use(Card)
